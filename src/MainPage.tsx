@@ -17,8 +17,8 @@ function MainPage(props: Props) {
     const {AUTO_COMPLETE_URL, PACKAGE_CONTENT_URL} = props;
     const [packages, setPackages] = useState([]);
     const [versions, setVersions] = useState([]);
-    const [selectedVersion, setSelectedVersion] = useState('')
-    const [selectedPackage, setSelectedPackage] = useState('')
+    const [selectedVersion, setSelectedVersion] = useState('');
+    const [selectedPackage, setSelectedPackage] = useState('');
 
     const onInputChangeHandler = (event: any, newInputValue: string) => {
         const getAutoComplete = async (newInputValue: string): Promise<void> => {
@@ -78,8 +78,9 @@ function MainPage(props: Props) {
                         key={selectedPackage}
                         disabled={versions.length === 0 || !selectedPackage}
                         onChange={(event: any, newValue: string | null) => {
-                            newValue && setSelectedVersion(newValue)
+                            newValue && setSelectedVersion(newValue);
                         }}
+                        PaperComponent={CustomPaper}
                         noOptionsText='No versions'
                         renderInput={params => <TextField {...params} label={selectedPackage ? 'Select Version' : 'Select Package First'}/>}
                     />
