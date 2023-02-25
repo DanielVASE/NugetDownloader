@@ -1,11 +1,16 @@
-import React, {Fragment, useState} from 'react';
-import {Autocomplete, Button, TextField} from "@mui/material";
+import React, {useState} from 'react';
+import {Autocomplete, Box, Button, Container, Paper, TextField, Typography} from "@mui/material";
 import axios from "axios";
+import DownloadIcon from '@mui/icons-material/Download';
 
 interface Props {
     AUTO_COMPLETE_URL: string
     PACKAGE_CONTENT_URL: string
 }
+
+const CustomPaper = (props: any) => {
+    return <Paper elevation={10} sx={{backgroundColor: '#1A1A1A'}} {...props} />;
+};
 
 function MainPage(props: Props) {
 
@@ -29,58 +34,63 @@ function MainPage(props: Props) {
             setSelectedPackage(selectedPackage);
             setVersions(result.data.versions.reverse());
         }
-        selectedPackage && getPackageVersions(selectedPackage.toLowerCase());
+        selectedPackage ? getPackageVersions(selectedPackage.toLowerCase()) : setSelectedPackage('');
     }
 
     const handleClick = () => {
-        const downloadPackage = async (): Promise<void> => {
-            const response = await axios.get(`${PACKAGE_CONTENT_URL}${selectedPackage}/${selectedVersion}/${selectedPackage}.nuspec`,
-                {responseType: 'blob'});
-            // create file link in browser's memory
-            const href = URL.createObjectURL(response.data);
-
-            // create "a" HTML element with href to file & click
-            const link = document.createElement('a');
-            link.href = href;
-            link.setAttribute('download', `${selectedPackage}.${selectedVersion}.nuspec`); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-
-            // clean up "a" element & remove ObjectURL
-            document.body.removeChild(link);
-            URL.revokeObjectURL(href);
-        }
-        downloadPackage();
-    }
-
-    const getDependencies = async () => {
-         const response = await axios.get(`https://api.nuget.org/v3/registration5-semver1/${selectedPackage}/${selectedVersion}.json`);
-
+        // const downloadPackage = async (): Promise<void> => {
+        //     const response = await axios.get(`${PACKAGE_CONTENT_URL}${selectedPackage}/${selectedVersion}/${selectedPackage}.nuspec`,
+        //         {responseType: 'blob'});
+        //     // create file link in browser's memory
+        //     const href = URL.createObjectURL(response.data);
+        //
+        //     // create "a" HTML element with href to file & click
+        //     const link = document.createElement('a');
+        //     link.href = href;
+        //     link.setAttribute('download', `${selectedPackage}.${selectedVersion}.nuspec`); //or any other extension
+        //     document.body.appendChild(link);
+        //     link.click();
+        //
+        //     // clean up "a" element & remove ObjectURL
+        //     document.body.removeChild(link);
+        //     URL.revokeObjectURL(href);
+        // }
+        // downloadPackage();
     }
 
     return (
-    <Fragment>
-        <Autocomplete
-            options={packages}
-            onInputChange={onInputChangeHandler}
-            onChange={onPackageSelected}
-            sx={{width: 300}}
-            noOptionsText='No Packages'
-            renderInput={params => <TextField {...params} variant='standard'/>}
-        />
-        <Autocomplete
-            options={versions}
-            sx={{width: 300}}
-            disabled={versions.length === 0}
-            onChange={(event: any, newValue: string | null) => {
-                newValue && setSelectedVersion(newValue)
-            }}
-            noOptionsText='No versions'
-            renderInput={params => <TextField {...params} variant='standard'/>}
-        />
-        <Button onClick={handleClick}>Download</Button>
-    </Fragment>
-);
+        <Container component="main" >
+            <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+                <Typography sx={{mt: 5, fontSize: 80, fontWeight: 'bold', color: '#eac367'}}>Epic NuGet Downloader</Typography>
+                <Paper sx={{width: 'fit-content', alignItems: 'center', padding: '5rem', display: 'flex', flexDirection: 'column', mt: 5}}>
+                    <Autocomplete
+                        options={packages}
+                        sx={{width: 400}}
+                        onInputChange={onInputChangeHandler}
+                        onChange={onPackageSelected}
+                        PaperComponent={CustomPaper}
+                        noOptionsText='No Packages'
+                        renderInput={params => <TextField {...params} label='Search Package'/>}
+                    />
+                    <Autocomplete
+                        options={versions}
+                        sx={{width: 400, mt: 7.5}}
+                        key={selectedPackage}
+                        disabled={versions.length === 0 || !selectedPackage}
+                        onChange={(event: any, newValue: string | null) => {
+                            newValue && setSelectedVersion(newValue)
+                        }}
+                        noOptionsText='No versions'
+                        renderInput={params => <TextField {...params} label={selectedPackage ? 'Select Version' : 'Select Package First'}/>}
+                    />
+                    <Button onClick={handleClick} variant='contained' sx={{width: 200, mt: 7.5}}>
+                        <DownloadIcon sx={{marginRight: '0.5rem'}}/>
+                        <b>Download</b>
+                    </Button>
+                </Paper>
+            </Box>
+        </Container>
+    );
 }
 
 export default MainPage;
