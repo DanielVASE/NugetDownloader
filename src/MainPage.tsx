@@ -2,8 +2,14 @@ import React, {Fragment, useState} from 'react';
 import {Autocomplete, Button, TextField} from "@mui/material";
 import axios from "axios";
 
-function MainPage() {
+interface Props {
+    AUTO_COMPLETE_URL: string
+    PACKAGE_CONTENT_URL: string
+}
 
+function MainPage(props: Props) {
+
+    const {AUTO_COMPLETE_URL, PACKAGE_CONTENT_URL} = props;
     const [packages, setPackages] = useState([]);
     const [versions, setVersions] = useState([]);
     const [selectedVersion, setSelectedVersion] = useState('')
@@ -11,7 +17,7 @@ function MainPage() {
 
     const onInputChangeHandler = (event: any, newInputValue: string) => {
         const getAutoComplete = async (newInputValue: string): Promise<void> => {
-            const result = await axios.get(`https://azuresearch-usnc.nuget.org/autocomplete?q=${newInputValue}&prerelease=true`);
+            const result = await axios.get(`${AUTO_COMPLETE_URL}?q=${newInputValue}&prerelease=true`);
             setPackages(result.data.data);
         }
         newInputValue ? getAutoComplete(newInputValue) : setPackages([]);
@@ -19,7 +25,7 @@ function MainPage() {
 
     const onPackageSelected = (event: any, selectedPackage: string | null) => {
         const getPackageVersions = async (selectedPackage: string): Promise<void> => {
-            const result = await axios.get(`https://api.nuget.org/v3-flatcontainer/${selectedPackage}/index.json`);
+            const result = await axios.get(`${PACKAGE_CONTENT_URL}${selectedPackage}/index.json`);
             setSelectedPackage(selectedPackage);
             setVersions(result.data.versions.reverse());
         }
@@ -28,7 +34,7 @@ function MainPage() {
 
     const handleClick = () => {
         const downloadPackage = async (): Promise<void> => {
-            const response = await axios.get(`https://api.nuget.org/v3-flatcontainer/${selectedPackage}/${selectedVersion}/${selectedPackage}.${selectedVersion}.nupkg`,
+            const response = await axios.get(`${PACKAGE_CONTENT_URL}${selectedPackage}/${selectedVersion}/${selectedPackage}.nuspec`,
                 {responseType: 'blob'});
             // create file link in browser's memory
             const href = URL.createObjectURL(response.data);
@@ -36,7 +42,7 @@ function MainPage() {
             // create "a" HTML element with href to file & click
             const link = document.createElement('a');
             link.href = href;
-            link.setAttribute('download', 'file.nupkg'); //or any other extension
+            link.setAttribute('download', `${selectedPackage}.${selectedVersion}.nuspec`); //or any other extension
             document.body.appendChild(link);
             link.click();
 
@@ -45,6 +51,11 @@ function MainPage() {
             URL.revokeObjectURL(href);
         }
         downloadPackage();
+    }
+
+    const getDependencies = async () => {
+         const response = await axios.get(`https://api.nuget.org/v3/registration5-semver1/${selectedPackage}/${selectedVersion}.json`);
+
     }
 
     return (
