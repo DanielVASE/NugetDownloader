@@ -1,4 +1,4 @@
-import { ThemeOptions } from '@mui/material/styles';
+import {ThemeOptions} from '@mui/material/styles';
 
 export const themeOptions: ThemeOptions = {
     palette: {
@@ -15,7 +15,7 @@ export const themeOptions: ThemeOptions = {
             secondary: '#ffebee',
             disabled: '#ffebee',
         },
-    },
+    }
 };
 
 export const SERVICE_INDEX = 'https://api.nuget.org/v3/index.json';
