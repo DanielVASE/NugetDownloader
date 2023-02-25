@@ -84,9 +84,9 @@ function MainPage(props: Props) {
                         noOptionsText='No versions'
                         renderInput={params => <TextField {...params} label={selectedPackage ? 'Select Version' : 'Select Package First'}/>}
                     />
-                    <Button onClick={handleClick} variant='contained' sx={{width: 200, mt: 7.5}}>
+                    <Button onClick={handleClick} variant='contained' sx={{width: 200, mt: 7.5, fontSize: 20}}>
                         <DownloadIcon sx={{marginRight: '0.5rem'}}/>
-                        <b>Download</b>
+                        Download
                     </Button>
                 </Paper>
             </Box>
