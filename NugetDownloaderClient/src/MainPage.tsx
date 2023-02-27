@@ -38,24 +38,19 @@ function MainPage(props: Props) {
     }
 
     const handleClick = () => {
-        // const downloadPackage = async (): Promise<void> => {
-        //     const response = await axios.get(`${PACKAGE_CONTENT_URL}${selectedPackage}/${selectedVersion}/${selectedPackage}.nuspec`,
-        //         {responseType: 'blob'});
-        //     // create file link in browser's memory
-        //     const href = URL.createObjectURL(response.data);
-        //
-        //     // create "a" HTML element with href to file & click
-        //     const link = document.createElement('a');
-        //     link.href = href;
-        //     link.setAttribute('download', `${selectedPackage}.${selectedVersion}.nuspec`); //or any other extension
-        //     document.body.appendChild(link);
-        //     link.click();
-        //
-        //     // clean up "a" element & remove ObjectURL
-        //     document.body.removeChild(link);
-        //     URL.revokeObjectURL(href);
-        // }
-        // downloadPackage();
+        const downloadPackage = async (): Promise<void> => {
+            const response = await axios.post(`http://localhost:5000/download`,
+                {
+                    package: selectedPackage,
+                    version: selectedVersion
+                }, {responseType: 'blob'});
+            const url = window.URL.createObjectURL(response.data);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${selectedPackage.toLowerCase()}.${selectedVersion}.zip`;
+            a.click();
+        }
+        downloadPackage();
     }
 
     return (
@@ -84,7 +79,11 @@ function MainPage(props: Props) {
                         noOptionsText='No versions'
                         renderInput={params => <TextField {...params} label={selectedPackage ? 'Select Version' : 'Select Package First'}/>}
                     />
-                    <Button onClick={handleClick} variant='contained' sx={{width: 200, mt: 7.5, fontSize: 20}}>
+                    <Button
+                        onClick={handleClick}
+                        variant='contained'
+                        disabled={!selectedPackage && !selectedVersion}
+                        sx={{width: 200, mt: 7.5, fontSize: 20}}>
                         <DownloadIcon sx={{marginRight: '0.5rem'}}/>
                         Download
                     </Button>
