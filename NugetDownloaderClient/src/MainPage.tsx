@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Autocomplete, Box, Button, Container, Paper, TextField, Typography} from "@mui/material";
+import {Autocomplete, Box, Button, Container, LinearProgress, Paper, TextField, Typography} from "@mui/material";
 import axios from "axios";
 import DownloadIcon from '@mui/icons-material/Download';
 
@@ -19,6 +19,7 @@ function MainPage(props: Props) {
     const [versions, setVersions] = useState([]);
     const [selectedVersion, setSelectedVersion] = useState('');
     const [selectedPackage, setSelectedPackage] = useState('');
+    const [isDownloading, setIsDownloading] = useState(false);
 
     const onInputChangeHandler = (event: any, newInputValue: string) => {
         const getAutoComplete = async (newInputValue: string): Promise<void> => {
@@ -39,6 +40,7 @@ function MainPage(props: Props) {
 
     const handleClick = () => {
         const downloadPackage = async (): Promise<void> => {
+            setIsDownloading(true);
             const response = await axios.post(`http://localhost:5000/download`,
                 {
                     package: selectedPackage,
@@ -49,6 +51,7 @@ function MainPage(props: Props) {
             a.href = url;
             a.download = `${selectedPackage.toLowerCase()}.${selectedVersion}.zip`;
             a.click();
+            setIsDownloading(false);
         }
         downloadPackage();
     }
@@ -87,6 +90,7 @@ function MainPage(props: Props) {
                         <DownloadIcon sx={{marginRight: '0.5rem'}}/>
                         Download
                     </Button>
+                    {isDownloading && <LinearProgress sx={{width: '100%', mt: 7.5}}/>}
                 </Paper>
             </Box>
         </Container>
