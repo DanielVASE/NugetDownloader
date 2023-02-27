@@ -3,19 +3,18 @@ import os from 'os';
 import path from 'path';
 import {exec} from 'child_process';
 import zipDir from 'adm-zip';
+import util from 'util';
+const execPromise = util.promisify(exec);
 
 async function downloadNuget(req, res) {
     let tmpDir;
-    const appPrefix = 'nuget-downloader';
+    const appPrefix = 'nuget-downloader-';
     try {
         tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), appPrefix));
-        const child = exec(`nuget install ${req.body.package} -Version ${req.body.version} -OutputDirectory ${tmpDir}`);
-        child.on('exit', () => {
-            const zip = new zipDir();
-            zip.addLocalFolder(tmpDir + `/${req.body.package}.${req.body.version}`);
-            zip.writeZip(tmpDir + `/${req.body.package}.${req.body.version}.zip`);
-            res.status(200).end(zip.toBuffer(), 'binary');
-        });
+        await execPromise(`nuget install ${req.body.package} -Version ${req.body.version} -OutputDirectory ${tmpDir}`);
+        const zip = new zipDir();
+        zip.addLocalFolder(tmpDir + `/${req.body.package}.${req.body.version}`);
+        res.status(200).end(zip.toBuffer(), 'binary');
     }
     catch (err){
         // handle error
@@ -25,7 +24,7 @@ async function downloadNuget(req, res) {
     finally {
         try {
             if (tmpDir) {
-                fs.rmSync(tmpDir, { recursive: true });
+                fs.rmSync(tmpDir, { recursive: true, force: true });
             }
         }
         catch (e) {
