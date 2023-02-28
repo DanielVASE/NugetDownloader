@@ -41,7 +41,7 @@ function MainPage(props: Props) {
     const handleClick = () => {
         const downloadPackage = async (): Promise<void> => {
             setIsDownloading(true);
-            const response = await axios.post(`http://localhost:5000/download`,
+            const response = await axios.post(`/download`,
                 {
                     package: selectedPackage,
                     version: selectedVersion
