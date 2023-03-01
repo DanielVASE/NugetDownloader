@@ -57,9 +57,9 @@ function MainPage(props: Props) {
     }
 
     return (
-        <Container component="main" >
+        <Container component="main" sx={{minWidth: 600}}>
             <Box sx={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
-                <Typography sx={{mt: 5, fontSize: 80, fontWeight: 'bold', color: '#eac367'}}>Epic NuGet Downloader</Typography>
+                <Typography sx={{width: '100%', mt: 5, fontSize: 80, fontWeight: 'bold', color: '#eac367', textAlign: 'center'}}>Epic NuGet Downloader</Typography>
                 <Paper sx={{width: 'fit-content', alignItems: 'center', padding: '5rem', display: 'flex', flexDirection: 'column', mt: 5}}>
                     <Autocomplete
                         options={packages}
