@@ -15,7 +15,7 @@ app.use(express.json());
 
 const buildPath = '../NugetDownloaderClient/build';
 
-app.use('/', express.static(path.resolve(buildPath)))
+app.use('/', express.static(path.resolve(buildPath)));
 
 app.get('*', (request, response) => {
     response.sendFile(path.resolve( buildPath + '/index.html'));
