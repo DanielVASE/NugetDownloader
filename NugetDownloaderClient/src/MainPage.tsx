@@ -63,7 +63,7 @@ function MainPage(props: Props) {
                 <Paper sx={{width: 'fit-content', alignItems: 'center', padding: '5rem', display: 'flex', flexDirection: 'column', mt: 5}}>
                     <Autocomplete
                         options={packages}
-                        sx={{width: 400}}
+                        sx={{width: 400, fontSize: '16px'}}
                         onInputChange={onInputChangeHandler}
                         onChange={onPackageSelected}
                         PaperComponent={CustomPaper}
@@ -72,7 +72,7 @@ function MainPage(props: Props) {
                     />
                     <Autocomplete
                         options={versions}
-                        sx={{width: 400, mt: 7.5}}
+                        sx={{width: 400, mt: 7.5, fontSize: '16px'}}
                         key={selectedPackage}
                         disabled={versions.length === 0 || !selectedPackage}
                         onChange={(event: any, newValue: string | null) => {
