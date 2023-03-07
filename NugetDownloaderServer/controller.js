@@ -13,7 +13,7 @@ async function downloadNuget(req, res) {
         tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), appPrefix));
         await execPromise(`nuget install ${req.body.package} -Version ${req.body.version} -OutputDirectory ${tmpDir}`);
         const zip = new zipDir();
-        zip.addLocalFolder(tmpDir + `/${req.body.package}.${req.body.version}`);
+        zip.addLocalFolder(tmpDir);
         res.status(200).end(zip.toBuffer(), 'binary');
     }
     catch (err){
